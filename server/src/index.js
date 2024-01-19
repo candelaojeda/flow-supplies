@@ -26,3 +26,25 @@ app.get('/reservas', async (req, res) => {
         res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
 });
+
+app.post('/reservar', async (req, res) => {
+    try {
+      const { nombreApellido, fecha, invitados } = req.body;
+  
+      // Insertar nueva reserva
+      const connection = await database.getConnection();
+      const [result] = await connection.query(
+        "INSERT INTO reserva (nombreApellido, fecha, invitados) VALUES (?, ?, ?)",
+        [nombreApellido, fecha, invitados]
+      );
+  
+      if (result.affectedRows === 1) {
+        res.status(201).json({ mensaje: 'Reserva creada exitosamente' });
+      } else {
+        res.status(500).json({ mensaje: 'No se pudo crear la reserva' });
+      }
+    } catch (error) {
+      console.error('Error al crear reserva:', error);
+      res.status(500).json({ mensaje: 'Error interno del servidor' });
+    }
+});
